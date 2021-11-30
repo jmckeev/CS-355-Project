@@ -22,23 +22,36 @@ public class Server {
             this.aliceIn = new BufferedReader(new InputStreamReader(this.alice.getInputStream()));
             this.bobOut = new PrintWriter(this.bob.getOutputStream(), true);
             this.bobIn = new BufferedReader(new InputStreamReader(this.bob.getInputStream()));
-            String line = "";
-            while (!line.equals("exit")) {
-                line = this.aliceIn.readLine();
-                System.out.println("line = " + line);
-            }
+
+
+            // get Alice mod and Bob mod and send to appropriate parties
+
+            int aliceMod = Integer.parseInt(this.aliceIn.readLine());
+            int bobMod = Integer.parseInt(this.bobIn.readLine());
+            this.aliceOut.println(bobMod);
+            this.bobOut.println(aliceMod);
+
+            // send hashes to each other
+
+            this.aliceOut.println(this.bobIn.readLine());
+            this.bobOut.println(this.aliceIn.readLine());
+
+            // wait for communication to stop
+
+//            String aliceExit = "";
+//            String bobExit = "";
+//            while (!aliceExit.equals("exit") && !bobExit.equals("exit")) {
+//                aliceExit = this.aliceIn.readLine();
+//                if (aliceExit == null) {
+//                    aliceExit = "";
+//                }
+//                bobExit = this.bobIn.readLine();
+//                if (bobExit == null) {
+//                    bobExit = "";
+//                }
+//            }
             System.out.println("Exiting");
             this.stop();
-//            this.aliceOut.println("Hello Alice");
-//            this.bobOut.println("Hello Bob");
-//            this.aliceOut = new PrintWriter(clientSocket.getOutputStream(), true);
-//            this.in = new BufferedReader(new InputStreamReader(this.clientSocket.getInputStream()));
-//            String greeting = this.in.readLine();
-//            if (greeting.equals("hello server")) {
-//                this.out.println("hello client");
-//            } else {
-//                this.out.println("unrecognized greeting");
-//            }
         } catch (Exception e) {
             e.printStackTrace();
         }
