@@ -1,23 +1,41 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.math.BigInteger;
-import java.security.DigestInputStream;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.lang.Object;
 
 public class MD5 {
-    private static String bytesToHex(byte[] hash) {
-        StringBuilder hexS = new StringBuilder(2 * hash.length);
-        for (int i = 0; i < hash.length; i++) {
-            String hex = Integer.toHexString(0xff & hash[i]);
-            if (hash.length == 1) {
-                hexS.append('0');
+    public static String getMD5(String filename) {
+        try {
+            File file = new File(filename);
+            FileReader fileReader = new FileReader(file);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String fileContents = "";
+            String temp;
+            while ((temp = bufferedReader.readLine()) != null) {
+                fileContents += temp;
             }
-            hexS.append(hex);
+            bufferedReader.close();
+            fileReader.close();
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] messageDigest = md.digest(fileContents.getBytes());
+
+            //convert byte array into sig num
+            BigInteger no = new BigInteger(1, messageDigest);
+
+            //convert message to hex
+            StringBuilder hashText = new StringBuilder(no.toString(16));
+            while(hashText.length() < 32) {
+                hashText.insert(0, "0");
+            }
+
+            return hashText.toString();
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        return hexS.toString();
     }
-    
+
     public static boolean compare(String f1, String f2) {
         if (f1.length() != f2.length()) {
             return false;
